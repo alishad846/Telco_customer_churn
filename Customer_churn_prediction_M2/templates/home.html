@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Churn Prediction</title>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+
+  <!-- Custom Styles -->
+  <style>
+    body.light-mode {
+      background-color: #f4f4f4;
+      color: #000;
+    }
+
+    body.dark-mode {
+      background-color: #121212;
+      color: #fff;
+    }
+
+    .purple-border {
+      border: 2px solid #4f2940;
+      border-radius: 4px;
+    }
+
+    .form-control {
+      background-color: #fff;
+      color: #000;
+      resize: none; /* Disables the expanding feature */
+      border-radius: 4px;
+    }
+
+    body.dark-mode .form-control {
+      background-color: #333;
+      color: #fff;
+      border-color: #674456;
+    }
+
+    .mode-toggle {
+      position: fixed;
+      top: 10px;
+      right: 10px;
+    }
+
+    .container {
+      margin-top: 40px;
+    }
+
+    .form-group {
+      margin-bottom: 1rem;
+    }
+
+    textarea {
+      padding: 0.5rem;
+    }
+
+    .btn-primary {
+      background-color: #6a1b9a;
+      border-color: #668f7b;
+    }
+
+    body.dark-mode .btn-primary {
+      background-color: #6a1b9a;
+      border-color: #ccc1a8;
+    }
+		.btn-primary {
+      background-color: #007bff;
+      border: none;
+      transition: background-color 0.3s ease, transform 0.3s ease;
+    }
+    .btn-primary:hover {
+      background-color: #0056b3;
+      transform: scale(1.05);
+    }
+
+    .form-control {
+      border-radius: 0.25rem;
+      transition: box-shadow 0.3s ease, border-color 0.3s ease;
+    }
+    .form-control:focus {
+      border-color: #007bff;
+      box-shadow: 0 0 0 0.2rem rgba(38, 143, 255, 0.25);
+    }
+
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    .row {
+      margin-bottom: 1rem;
+    }
+
+    .container {
+      background-color: #f8f9fa;
+      border-radius: 0.5rem;
+      padding: 2rem;
+    }
+
+		body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+            transition: background-color 0.3s ease;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        form {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            transition: box-shadow 0.3s ease;
+        }
+        form:hover {
+            box-shadow: 0 0 20px rgba(0,0,0,0.2);
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #555;
+        }
+        input[type="text"], input[type="submit"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+            transition: border-color 0.3s ease;
+        }
+        input[type="text"]:focus {
+            border-color: #007bff;
+            outline: none;
+        }
+        input[type="submit"] {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        input[type="submit"]:hover {
+            background-color: #0056b3;
+        }
+        .results {
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 20px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        .results label {
+            display: block;
+            margin-bottom: 5px;
+            color: #555;
+        }
+        .results input[type="text"] {
+            background-color: #e9ecef;
+            border: 1px solid #ccc;
+            color: #495057;
+            cursor: default;
+        }
+        .error {
+            color: red;
+            font-weight: bold;
+        }
+        .success {
+            color: green;
+            font-weight: bold;
+        }
+  </style>
+</head>
+
+<body class="light-mode">
+  <div class="container">
+    <h1>Churn Prediction</h1>
+
+
+    <form action="http://localhost:5000/" method="POST">
+      <div class="row">
+        <!-- 19 divs arranged in 3 columns -->
+        <!-- Example divs -->
+        <div class="col-md-4 mb-3">
+          <div class="form-group purple-border">
+            <label for="query1">SeniorCitizen:</label>
+            <textarea class="form-control" id="query1" name="query1" rows="2" autofocus>{{query1}}</textarea>
+          </div>
+        </div>
+        <div class="col-md-4 mb-3">
+          <div class="form-group purple-border">
+            <label for="query2">MonthlyCharges:</label>
+            <textarea class="form-control" id="query2" name="query2" rows="2" autofocus>{{query2}}</textarea>
+          </div>
+        </div>
+        <div class="col-md-4 mb-3">
+          <div class="form-group purple-border">
+            <label for="query3">TotalCharges:</label>
+            <textarea class="form-control" id="query3" name="query3" rows="2" autofocus>{{query3}}</textarea>
+          </div>
+        </div>
+        <!-- Add additional divs as needed, following the same structure -->
+        <!-- Here are the remaining divs: -->
+        <div class="col-md-4 mb-3">
+          <div class="form-group purple-border">
+            <label for="query4">Gender:</label>
+            <textarea class="form-control" id="query4" name="query4" rows="2" autofocus>{{query4}}</textarea>
+          </div>
+        </div>
+        <div class="col-md-4 mb-3">
+          <div class="form-group purple-border">
+            <label for="query5">Partner:</label>
+            <textarea class="form-control" id="query5" name="query5" rows="2" autofocus>{{query5}}</textarea>
+          </div>
+        </div>
+        <div class="col-md-4 mb-3">
+          <div class="form-group purple-border">
+            <label for="query6">Dependents:</label>
+            <textarea class="form-control" id="query6" name="query6" rows="2" autofocus>{{query6}}</textarea>
+          </div>
+        </div>
+        <div class="col-md-4 mb-3">
+          <div class="form-group purple-border">
+            <label for="query7">PhoneService:</label>
+            <textarea class="form-control" id="query7" name="query7" rows="2" autofocus>{{query7}}</textarea>
+          </div>
+        </div>
+        <div class="col-md-4 mb-3">
+          <div class="form-group purple-border">
+            <label for="query8">MultipleLines:</label>
+            <textarea class="form-control" id="query8" name="query8" rows="2" autofocus>{{query8}}</textarea>
+          </div>
+        </div>
+        <div class="col-md-4 mb-3">
+          <div class="form-group purple-border">
+            <label for="query9">InternetService:</label>
+            <textarea class="form-control" id="query9" name="query9" rows="2" autofocus>{{query9}}</textarea>
+          </div>
+        </div>
+        <div class="col-md-4 mb-3">
+          <div class="form-group purple-border">
+            <label for="query10">OnlineSecurity:</label>
+            <textarea class="form-control" id="query10" name="query10" rows="2" autofocus>{{query10}}</textarea>
+          </div>
+        </div>
+        <div class="col-md-4 mb-3">
+          <div class="form-group purple-border">
+            <label for="query11">OnlineBackup:</label>
+            <textarea class="form-control" id="query11" name="query11" rows="2" autofocus>{{query11}}</textarea>
+          </div>
+        </div>
+        <div class="col-md-4 mb-3">
+          <div class="form-group purple-border">
+            <label for="query12">DeviceProtection:</label>
+            <textarea class="form-control" id="query12" name="query12" rows="2" autofocus>{{query12}}</textarea>
+          </div>
+        </div>
+        <div class="col-md-4 mb-3">
+          <div class="form-group purple-border">
+            <label for="query13">TechSupport:</label>
+            <textarea class="form-control" id="query13" name="query13" rows="2" autofocus>{{query13}}</textarea>
+          </div>
+        </div>
+        <div class="col-md-4 mb-3">
+          <div class="form-group purple-border">
+            <label for="query14">StreamingTV:</label>
+            <textarea class="form-control" id="query14" name="query14" rows="2" autofocus>{{query14}}</textarea>
+          </div>
+        </div>
+        <div class="col-md-4 mb-3">
+          <div class="form-group purple-border">
+            <label for="query15">StreamingMovies:</label>
+            <textarea class="form-control" id="query15" name="query15" rows="2" autofocus>{{query15}}</textarea>
+          </div>
+        </div>
+        <div class="col-md-4 mb-3">
+          <div class="form-group purple-border">
+            <label for="query16">Contract:</label>
+            <textarea class="form-control" id="query16" name="query16" rows="2" autofocus>{{query16}}</textarea>
+          </div>
+        </div>
+        <div class="col-md-4 mb-3">
+          <div class="form-group purple-border">
+            <label for="query17">PaperlessBilling:</label>
+            <textarea class="form-control" id="query17" name="query17" rows="2" autofocus>{{query17}}</textarea>
+          </div>
+        </div>
+        <div class="col-md-4 mb-3">
+          <div class="form-group purple-border">
+            <label for="query18">PaymentMethod:</label>
+            <textarea class="form-control" id="query18" name="query18" rows="2" autofocus>{{query18}}</textarea>
+          </div>
+        </div>
+        <div class="col-md-4 mb-3">
+          <div class="form-group purple-border">
+            <label for="query19">Tenure:</label>
+            <textarea class="form-control" id="query19" name="query19" rows="2" autofocus>{{query19}}</textarea>
+          </div>
+        </div>
+      </div>
+
+
+	<div class="container mt-4">
+    <form>
+      <div class="row mb-4">
+        <div class="col-md-6 d-flex justify-content-end">
+          <button type="submit" class="btn btn-primary">Submit</button>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-sm-9">
+          <div class="form-group">
+						<h2>Results</h2>
+						<p>
+								<!-- Display output results -->
+								<label for="output1">Prediction:</label>
+								<input type="text" id="output1" value="{{ output1 }}" readonly><br>
+								<label for="output2">Confidence:</label>
+								<input type="text" id="output2" value="{{ output2 }}" readonly><br>
+						</p>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.0.11/dist/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+  <!-- Dark/Light Mode Script -->
+
+</body>
+
+</html>
